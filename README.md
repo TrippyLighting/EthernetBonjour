@@ -9,5 +9,5 @@ Teensy3 with WIZ820io
 
 Using Arduino 1.0.5 and Teensyduino 18.2
 
-The newest revised code replaces all direct hardware calls to teh W5100 chip with calls to EthernetUDP methods.
+The newest revised code replaces all direct hardware calls to the W5100 chip with calls to EthernetUDP methods.
 This will provide much better adaptability to different Ethernet hardware. 
