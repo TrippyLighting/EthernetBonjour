@@ -24,7 +24,6 @@
 extern "C" {
    #include <inttypes.h>
 }
-#include <utility/socket.h>
 
 typedef uint8_t byte;
 
@@ -72,17 +71,12 @@ typedef void (*BonjourServiceFoundCallback)(const char*, MDNSServiceProtocol_t, 
 
 #define  NumMDNSServiceRecords   (8)
 
-extern const uint8_t ECSockClosed;
-extern const uint8_t ECSnCrSockSend;
-extern const uint8_t ECSnCrSockRecv;
-extern const uint8_t ECSnMrUDP;
-extern const uint8_t ECSnMrMulticast;
-
-class EthernetBonjourClass
+//class EthernetBonjourClass
+class EthernetBonjourClass :
+		public EthernetUDP
 {
 private:
    MDNSDataInternal_t    _mdnsData;
-   int                  _socket;
    MDNSState_t           _state;
    uint8_t*             _bonjourName;
    MDNSServiceRecord_t* _serviceRecords[NumMDNSServiceRecords];
@@ -100,9 +94,7 @@ private:
    MDNSError_t _processMDNSQuery();
    MDNSError_t _sendMDNSMessage(uint32_t peerAddress, uint32_t xid, int type, int serviceRecord);
 
-   int _startMDNSSession();
-   int _closeMDNSSession();
-   
+
    void _writeDNSName(const uint8_t* name, uint16_t* pPtr, uint8_t* buf, int bufSize,
                       int zeroTerminate);
    void _writeMyIPAnswerRecord(uint16_t* pPtr, uint8_t* buf, int bufSize);
