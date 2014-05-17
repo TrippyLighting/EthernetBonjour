@@ -1126,7 +1126,11 @@ int EthernetBonjourClass::setBonjourName(const char* bonjourName)
 int EthernetBonjourClass::addServiceRecord(const char* name, uint16_t port,
                                            MDNSServiceProtocol_t proto)
 {
-   return this->addServiceRecord(name, port, proto, "");
+#if defined(__MK20DX128__) || defined(__MK20DX256__)
+	 return this->addServiceRecord(name, port, proto, NULL); //works for Teensy 3 (32-bit Arm Cortex)
+#else
+   return this->addServiceRecord(name, port, proto, ""); //works for Teensy 2 (8-bit Atmel)
+#endif
 }
 
 // return values:
