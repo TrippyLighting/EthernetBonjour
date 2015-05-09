@@ -4,8 +4,7 @@ EthernetBonjour
 Bonjour (ZeroConf) Library for Arduino & Teensyduino
 
 mDNS (registering services) and DNS-SD (service discovery) has been tested and works on:
-Teensy++2 with WIZ81MJ and
-Teensy3 with WIZ820io
+Teensy++2 with WIZ81MJ, Teensy3 with WIZ820io and Sparkfun Mega Pro
 
 Using Arduino 1.6.4 and Teensyduino 1.18, Mega Pro
 
