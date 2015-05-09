@@ -161,6 +161,41 @@ int EthernetBonjourClass::begin()
 // return values:
 // 1 on success
 // 0 otherwise
+uint8_t EthernetBonjourClass::beginMulti(IPAddress ip, uint16_t port) {
+
+  for (int i = 0; i < MAX_SOCK_NUM; i++) {
+    uint8_t s = W5100.readSnSR(i);
+    if (s == SnSR::CLOSED || s == SnSR::FIN_WAIT) {
+      _sock = i;
+      break;
+    }
+  }
+
+  if (_sock == MAX_SOCK_NUM)
+    return 0;
+
+  byte mac[] = {  0x01, 0x00, 0x5E, 0x00, 0x00, 0x00 };
+
+  mac[3] = ip[1] & 0x7F;
+  mac[4] = ip[2];
+  mac[5] = ip[3];
+
+//  byte mac[] = { 0x01, 0x00, 0x5e, 0x00, 0x00, 0xfb };
+
+  W5100.writeSnDIPR(_sock, rawIPAddress(ip));
+  W5100.writeSnDPORT(_sock, port);
+  W5100.writeSnDHAR(_sock,mac);
+
+  _remaining = 0;
+
+  socket(_sock, SnMR::UDP, port, SnMR::MULTI);
+
+  return 1;
+}
+
+// return values:
+// 1 on success
+// 0 otherwise
 int EthernetBonjourClass::_initQuery(uint8_t idx, const char* name, unsigned long timeout)
 {
    int statusCode = 0;
@@ -550,7 +585,7 @@ MDNSError_t EthernetBonjourClass::_processMDNSQuery()
 
    if (0 == dnsHeader->queryResponse &&
        DNSOpQuery == dnsHeader->opCode &&
-       MDNS_SERVER_PORT == this->_remotePort)
+       MDNS_SERVER_PORT == this->remotePort())
 	  {
       // process an MDNS query
       int offset = sizeof(DNSHeader_t);
@@ -663,7 +698,7 @@ MDNSError_t EthernetBonjourClass::_processMDNSQuery()
 
    else if (1 == dnsHeader->queryResponse &&
               DNSOpQuery == dnsHeader->opCode &&
-              MDNS_SERVER_PORT == _remotePort &&
+              MDNS_SERVER_PORT == remotePort() &&
               (NULL != this->_resolveNames[0] || NULL != this->_resolveNames[1]))
 	     {
          int offset = sizeof(DNSHeader_t);
@@ -1022,19 +1057,19 @@ errorReturn:
    for (j=0; j<NumMDNSServiceRecords+2; j++) {
       if (recordsAskedFor[j]) {
          if (0 == j)
-            (void)this->_sendMDNSMessage(this->_remoteIP, xid, (int)MDNSPacketTypeMyIPAnswer, 0);
+            (void)this->_sendMDNSMessage(this->remoteIP(), xid, (int)MDNSPacketTypeMyIPAnswer, 0);
          else if (1 == j) {
             uint8_t k = 2;
             for (k=0; k<NumMDNSServiceRecords; k++)
                recordsAskedFor[k+2] = 1;
          } else if (NULL != this->_serviceRecords[j-2])
-            (void)this->_sendMDNSMessage(this->_remoteIP, xid, (int)MDNSPacketTypeServiceRecord, j-2);
+            (void)this->_sendMDNSMessage(this->remoteIP(), xid, (int)MDNSPacketTypeServiceRecord, j-2);
       }
    }
    
    // if we were asked for our IPv6 address, say that we don't have any
    if (wantsIPv6Addr)
-      (void)this->_sendMDNSMessage(this->_remoteIP, xid, (int)MDNSPacketTypeNoIPv6AddrAvailable, 0);
+      (void)this->_sendMDNSMessage(this->remoteIP(), xid, (int)MDNSPacketTypeNoIPv6AddrAvailable, 0);
    
    return statusCode;
 }
