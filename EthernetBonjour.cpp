@@ -27,6 +27,9 @@
 #include <Ethernet.h>
 #include <EthernetUdp.h>
 
+#include "utility/w5100.h"
+#include "utility/socket.h"
+
 extern "C" {
    #include <utility/EthernetUtil.h>
 }
