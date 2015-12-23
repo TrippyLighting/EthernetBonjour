@@ -117,7 +117,7 @@ EthernetBonjourClass::EthernetBonjourClass()
    memset(&this->_serviceRecords, 0, sizeof(this->_serviceRecords));
    
    this->_state = MDNSStateIdle;
-   this->_sock = -1;
+//   this->_sock = -1;
    
    this->_bonjourName = NULL;
    this->_resolveNames[0] = NULL;
@@ -145,7 +145,7 @@ int EthernetBonjourClass::begin(const char* bonjourName)
 	int statusCode = 0;
 	statusCode = this->setBonjourName(bonjourName);
 	if (statusCode)
-	statusCode = this->beginMulti(mdnsMulticastIPAddr, MDNS_SERVER_PORT);
+	statusCode = this->beginMulticast(mdnsMulticastIPAddr, MDNS_SERVER_PORT);
 
 	return statusCode;
 }
@@ -550,7 +550,7 @@ MDNSError_t EthernetBonjourClass::_processMDNSQuery()
 
    if (0 == dnsHeader->queryResponse &&
        DNSOpQuery == dnsHeader->opCode &&
-       MDNS_SERVER_PORT == this->_remotePort)
+       MDNS_SERVER_PORT == this->remotePort())
 	  {
       // process an MDNS query
       int offset = sizeof(DNSHeader_t);
@@ -663,7 +663,7 @@ MDNSError_t EthernetBonjourClass::_processMDNSQuery()
 
    else if (1 == dnsHeader->queryResponse &&
               DNSOpQuery == dnsHeader->opCode &&
-              MDNS_SERVER_PORT == _remotePort &&
+              MDNS_SERVER_PORT == remotePort() &&
               (NULL != this->_resolveNames[0] || NULL != this->_resolveNames[1]))
 	     {
          int offset = sizeof(DNSHeader_t);
@@ -1022,19 +1022,19 @@ errorReturn:
    for (j=0; j<NumMDNSServiceRecords+2; j++) {
       if (recordsAskedFor[j]) {
          if (0 == j)
-            (void)this->_sendMDNSMessage(this->_remoteIP, xid, (int)MDNSPacketTypeMyIPAnswer, 0);
+            (void)this->_sendMDNSMessage(this->remoteIP(), xid, (int)MDNSPacketTypeMyIPAnswer, 0);
          else if (1 == j) {
             uint8_t k = 2;
             for (k=0; k<NumMDNSServiceRecords; k++)
                recordsAskedFor[k+2] = 1;
          } else if (NULL != this->_serviceRecords[j-2])
-            (void)this->_sendMDNSMessage(this->_remoteIP, xid, (int)MDNSPacketTypeServiceRecord, j-2);
+            (void)this->_sendMDNSMessage(this->remoteIP(), xid, (int)MDNSPacketTypeServiceRecord, j-2);
       }
    }
    
    // if we were asked for our IPv6 address, say that we don't have any
    if (wantsIPv6Addr)
-      (void)this->_sendMDNSMessage(this->_remoteIP, xid, (int)MDNSPacketTypeNoIPv6AddrAvailable, 0);
+      (void)this->_sendMDNSMessage(this->remoteIP(), xid, (int)MDNSPacketTypeNoIPv6AddrAvailable, 0);
    
    return statusCode;
 }
