@@ -1,0 +1,36 @@
+#######################################
+# Syntax Coloring Map For HP RGB Shield V2.5
+#######################################
+
+#######################################
+# Datatypes (KEYWORD1)
+#######################################
+
+EthernetBonjour			KEYWORD1
+
+#######################################
+# Methods and Functions (KEYWORD2)
+#######################################
+begin					KEYWORD2
+setBonjourName			KEYWORD2
+addServiceRecord		KEYWORD2
+run						KEYWORD2
+removeServiceRecord 	KEYWORD2
+removeAllServiceRecords KEYWORD2
+setNameResolvedCallback KEYWORD2
+resolveName				KEYWORD2
+cancelResolveName		KEYWORD2
+isResolvingName			KEYWORD2
+setServiceFoundCallback KEYWORD2
+startDiscoveringService KEYWORD2
+stopDiscoveringService	KEYWORD2
+isDiscoveringService	KEYWORD2
+#######################################
+# Instances (KEYWORD2)
+#######################################
+
+
+#######################################
+# Constants (LITERAL1)
+#######################################
+
