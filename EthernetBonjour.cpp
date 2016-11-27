@@ -528,6 +528,11 @@ MDNSError_t EthernetBonjourClass::_processMDNSQuery()
    }
 
    udpBuffer = (uint8_t*) my_malloc(udp_len);  //allocate memory to hold _remaining UDP packet
+   if (NULL == udpBuffer) {
+      this->flush();
+      statusCode = MDNSOutOfMemory;
+      goto errorReturn;
+   }
    this->read((uint8_t*)udpBuffer, udp_len);//read _remaining UDP packet from W5100/W5200 into memory
    ptr = (uintptr_t)udpBuffer;
 
