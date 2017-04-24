@@ -121,6 +121,8 @@ public:
    
    int begin();
    int begin(const char* bonjourName);
+   uint8_t beginMulti(IPAddress ip, uint16_t port);
+   
    void run();
    
    int setBonjourName(const char* bonjourName);

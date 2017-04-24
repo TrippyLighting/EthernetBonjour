@@ -27,6 +27,9 @@
 #include <Ethernet.h>
 #include <EthernetUdp.h>
 
+#include "utility/w5100.h"
+#include "utility/socket.h"
+
 extern "C" {
    #include <utility/EthernetUtil.h>
 }
@@ -156,6 +159,41 @@ int EthernetBonjourClass::begin(const char* bonjourName)
 int EthernetBonjourClass::begin()
 {
    return this->begin(MDNS_DEFAULT_NAME);
+}
+
+// return values:
+// 1 on success
+// 0 otherwise
+uint8_t EthernetBonjourClass::beginMulti(IPAddress ip, uint16_t port) {
+
+  for (int i = 0; i < MAX_SOCK_NUM; i++) {
+    uint8_t s = W5100.readSnSR(i);
+    if (s == SnSR::CLOSED || s == SnSR::FIN_WAIT) {
+      _sock = i;
+      break;
+    }
+  }
+
+  if (_sock == MAX_SOCK_NUM)
+    return 0;
+
+  byte mac[] = {  0x01, 0x00, 0x5E, 0x00, 0x00, 0x00 };
+
+  mac[3] = ip[1] & 0x7F;
+  mac[4] = ip[2];
+  mac[5] = ip[3];
+
+//  byte mac[] = { 0x01, 0x00, 0x5e, 0x00, 0x00, 0xfb };
+
+  W5100.writeSnDIPR(_sock, rawIPAddress(ip));
+  W5100.writeSnDPORT(_sock, port);
+  W5100.writeSnDHAR(_sock,mac);
+
+  _remaining = 0;
+
+  socket(_sock, SnMR::UDP, port, SnMR::MULTI);
+
+  return 1;
 }
 
 // return values:
