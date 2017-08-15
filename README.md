@@ -15,4 +15,4 @@ This will provide much better adaptability to different Ethernet hardware.
 
  - 22-Dec-2015 Updated to provide compatibility with Arduino 1.6.6. Since 1.6.6. the Ethernet library provides support for multicast a pre-requisite for Bonjour to work.
 
- - 29-06-2019 Fixed string zero termination which breaks everything - Marcel Benning / deltacore
+ - 29-June-2017 Fixed string zero termination which breaks everything - Marcel Benning / deltacore
