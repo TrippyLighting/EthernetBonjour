@@ -485,9 +485,10 @@ MDNSError_t EthernetBonjourClass::_sendMDNSMessage(uint32_t peerAddress, uint32_
 
 	this->endPacket();
 
-errorReturn:
-
+	
 #if defined(_USE_MALLOC_)
+
+errorReturn:
 	if (NULL != dnsHeader)
 		my_free(dnsHeader);
 #endif
@@ -507,7 +508,7 @@ MDNSError_t EthernetBonjourClass::_processMDNSQuery()
 	DNSHeader_t dnsHeaderBuf;
 	DNSHeader_t* dnsHeader = &dnsHeaderBuf;
 #endif
-	int i, j;
+	uint16_t i, j;
 	uint8_t* buf;
 	uint32_t xid;
 	uint16_t udp_len, qCnt, aCnt, aaCnt, addCnt;
